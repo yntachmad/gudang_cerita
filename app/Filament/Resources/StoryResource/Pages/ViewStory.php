@@ -18,12 +18,12 @@ class ViewStory extends ViewRecord
             Actions\EditAction::make(),
             Actions\Action::make('Approve')
             ->label('Approve')
-
+            ->color('success')
             ->visible(fn (Story $record) => auth()->user()->hasRole('Reviewer') && $record->status === 'in review' && $record->reviewer_id === auth()->id())
             ->form([
                 \Filament\Forms\Components\Textarea::make('feedback')
                 ->label('Feedback')
-                ->required()
+                // ->required()
                 ->rows(3)
                 ->columnSpanFull(),
 
@@ -36,6 +36,47 @@ class ViewStory extends ViewRecord
                 // return redirect(Static::getUrl(['list']));
 
             }),
+             Actions\Action::make('cancel')
+            ->label('Cancel')
+            ->color('danger')
+            ->visible(fn (Story $record) => auth()->user()->hasRole('Reviewer') && $record->status === 'in review' && $record->reviewer_id === auth()->id())
+            ->form([
+                \Filament\Forms\Components\Textarea::make('feedback')
+                ->label('Feedback')
+                // ->required()
+                ->rows(3)
+                ->columnSpanFull(),
+
+            ])
+            ->Action(function (Story $record, array $data) {
+                $record->update([
+                    'status' => 'cancelled',
+                    'feedback' => $data['feedback'],
+                ]);
+                // return redirect(Static::getUrl(['list']));
+
+            }),
+             Actions\Action::make('rework')
+            ->label('Rework')
+            ->color('info')
+            ->visible(fn (Story $record) => auth()->user()->hasRole('Reviewer') && $record->status === 'in review' && $record->reviewer_id === auth()->id())
+            ->form([
+                \Filament\Forms\Components\Textarea::make('feedback')
+                ->label('Feedback')
+                // ->required()
+                ->rows(3)
+                ->columnSpanFull(),
+
+            ])
+            ->Action(function (Story $record, array $data) {
+                $record->update([
+                    'status' => 'rework',
+                    'feedback' => $data['feedback'],
+                ]);
+                // return redirect(Static::getUrl(['list']));
+
+            }),
+
 
         ];
     }
