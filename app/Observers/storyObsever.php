@@ -18,7 +18,8 @@ class storyObsever
 
     public function updating(Story $story): void
     {
-        $story->reviewer_id = auth()->id();
+        // $story->reviewer_id = auth()->id();
+        // $story->status = 'waiting for review';
     }
     public function created(Story $story): void
     {

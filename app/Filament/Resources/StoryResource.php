@@ -97,7 +97,7 @@ class StoryResource extends Resource
                 ->action(function (Story $record) {
                     $record->update([
                         'status' => 'in review',
-                        // 'reviewer_id' => Auth::id(),
+                        'reviewer_id' => Auth::id(),
                     ]);
                     return redirect(Static::getUrl('view', ['record' => $record]));
                 }),
