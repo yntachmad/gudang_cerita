@@ -59,7 +59,16 @@ class StoryResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->searchable(),
+                ->badge()
+                ->color(fn (Story $record) => match ($record->status) {
+                    'waiting for review' => 'yellow',
+                    'in review' => 'blue',
+                    'rework' => 'orange',
+                    'cancelled' => 'red',
+                    'approved' => 'green',
+                    default => 'gray',
+                })
+                ->searchable(),
                 Tables\Columns\TextColumn::make('author.name')
                     ->searchable()
                     ->sortable(),
@@ -92,7 +101,7 @@ class StoryResource extends Resource
                 Tables\Actions\Action::make('Review')
                 ->label('Review')
                 ->icon('heroicon-o-pencil-square')
-                ->visible(fn (Story $record) => auth()->user()->hasRole('Reviewer') && $record->status === 'waiting for review')
+                ->visible(fn (Story $record) => auth()->user()->hasRole('Reviewer') && $record->status === 'waiting for review' && ($record->reviewer_id === auth()->user()->id || is_null($record->reviewer_id)))
                 ->requiresConfirmation()
                 ->action(function (Story $record) {
                     $record->update([
